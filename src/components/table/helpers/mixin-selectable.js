@@ -194,6 +194,9 @@ export default {
         this.clearSelected()
         return
       }
+      if (item._selectable !== undefined && !item._selectable) {
+        return
+      }
       const selectMode = this.selectMode
       let selectedRows = this.selectedRows.slice()
       let selected = !selectedRows[index]
