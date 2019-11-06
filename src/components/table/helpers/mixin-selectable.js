@@ -212,12 +212,7 @@ export default {
           }
           selected = true
         } else {
-          if (!(evt.ctrlKey || evt.metaKey)) {
-            // Clear range selection if any
-            selectedRows = []
-            selected = true
-          }
-          this.selectedLastRow = selected ? index : -1
+          this.selectedLastRow = index
         }
       }
       selectedRows[index] = selected
