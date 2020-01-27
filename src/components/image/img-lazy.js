@@ -1,6 +1,9 @@
 import Vue from '../../utils/vue'
+import identity from '../../utils/identity'
+import { concat } from '../../utils/array'
 import { getComponentConfig } from '../../utils/config'
 import { hasIntersectionObserverSupport } from '../../utils/env'
+import { toInteger } from '../../utils/number'
 import { VBVisible } from '../../directives/visible/visible'
 import { BImg } from './img'
 
@@ -11,6 +14,14 @@ export const props = {
     type: String,
     default: null,
     required: true
+  },
+  srcset: {
+    type: [String, Array],
+    default: null
+  },
+  sizes: {
+    type: [String, Array],
+    default: null
   },
   alt: {
     type: String,
@@ -109,6 +120,18 @@ export const BImgLazy = /*#__PURE__*/ Vue.extend({
     },
     computedHeight() {
       return this.isShown ? this.height : this.blankHeight || this.height
+    },
+    computedSrcset() {
+      const srcset = concat(this.srcset)
+        .filter(identity)
+        .join(',')
+      return !this.blankSrc || this.isShown ? srcset : null
+    },
+    computedSizes() {
+      const sizes = concat(this.sizes)
+        .filter(identity)
+        .join(',')
+      return !this.blankSrc || this.isShown ? sizes : null
     }
   },
   watch: {
@@ -158,7 +181,7 @@ export const BImgLazy = /*#__PURE__*/ Vue.extend({
         value: this.doShow,
         modifiers: {
           // Root margin from viewport
-          [`${parseInt(this.offset, 10) || 0}`]: true,
+          [`${toInteger(this.offset) || 0}`]: true,
           // Once the image is shown, stop observing
           once: true
         }
@@ -173,6 +196,8 @@ export const BImgLazy = /*#__PURE__*/ Vue.extend({
         blank: this.computedBlank,
         width: this.computedWidth,
         height: this.computedHeight,
+        srcset: this.computedSrcset || null,
+        sizes: this.computedSizes || null,
         // Passthrough props
         alt: this.alt,
         blankColor: this.blankColor,
